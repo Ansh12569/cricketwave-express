@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Trophy } from 'lucide-react';
@@ -12,7 +11,7 @@ const mockLiveMatches = [
     teams: [
       { team: 'India', logoText: 'IND', score: '287/5', overs: '45.2' },
       { team: 'Australia', logoText: 'AUS', score: '', overs: '' }
-    ],
+    ] as [TeamScore, TeamScore],
     status: 'live' as const,
     statusText: 'India won the toss and elected to bat',
     series: 'India vs Australia 2024',
@@ -26,7 +25,7 @@ const mockLiveMatches = [
     teams: [
       { team: 'England', logoText: 'ENG', score: '325/8', overs: '50.0' },
       { team: 'South Africa', logoText: 'SA', score: '210/4', overs: '32.1' }
-    ],
+    ] as [TeamScore, TeamScore],
     status: 'live' as const,
     statusText: 'South Africa need 116 runs from 107 balls',
     series: 'England Tour of South Africa',
@@ -43,7 +42,7 @@ const mockRecentMatches = [
     teams: [
       { team: 'Pakistan', logoText: 'PAK', score: '200/8', overs: '20.0' },
       { team: 'New Zealand', logoText: 'NZ', score: '202/4', overs: '19.2' }
-    ],
+    ] as [TeamScore, TeamScore],
     status: 'completed' as const,
     statusText: 'New Zealand won by 6 wickets',
     series: 'T20I Tri-Series',
@@ -57,7 +56,7 @@ const mockRecentMatches = [
     teams: [
       { team: 'West Indies', logoText: 'WI', score: '267/10', overs: '48.3' },
       { team: 'Sri Lanka', logoText: 'SL', score: '268/7', overs: '47.1' }
-    ],
+    ] as [TeamScore, TeamScore],
     status: 'completed' as const,
     statusText: 'Sri Lanka won by 3 wickets',
     series: 'West Indies vs Sri Lanka',
@@ -72,9 +71,9 @@ const mockUpcomingMatches = [
   {
     id: 'match5',
     teams: [
-      { team: 'Bangladesh', logoText: 'BAN' },
-      { team: 'Zimbabwe', logoText: 'ZIM' }
-    ],
+      { team: 'Bangladesh', logoText: 'BAN', score: '', overs: '' },
+      { team: 'Zimbabwe', logoText: 'ZIM', score: '', overs: '' }
+    ] as [TeamScore, TeamScore],
     status: 'upcoming' as const,
     statusText: 'Match starts in 2 days',
     series: 'Zimbabwe tour of Bangladesh',
@@ -86,9 +85,9 @@ const mockUpcomingMatches = [
   {
     id: 'match6',
     teams: [
-      { team: 'Mumbai Indians', logoText: 'MI' },
-      { team: 'Chennai Super Kings', logoText: 'CSK' }
-    ],
+      { team: 'Mumbai Indians', logoText: 'MI', score: '', overs: '' },
+      { team: 'Chennai Super Kings', logoText: 'CSK', score: '', overs: '' }
+    ] as [TeamScore, TeamScore],
     status: 'upcoming' as const,
     statusText: 'Match starts tomorrow',
     series: 'IPL 2023',
@@ -98,6 +97,14 @@ const mockUpcomingMatches = [
     time: '7:30 PM'
   },
 ];
+
+// We need to import the TeamScore type from LiveScoreCard.tsx to satisfy TypeScript
+type TeamScore = {
+  team: string;
+  logoText: string;
+  score?: string;
+  overs?: string;
+};
 
 const LiveScoresSection = () => {
   const [activeTab, setActiveTab] = useState('live');

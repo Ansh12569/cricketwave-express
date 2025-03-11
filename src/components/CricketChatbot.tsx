@@ -61,15 +61,17 @@ const CricketChatbot = () => {
         {
           parts: [
             {
-              text: `You are CricketGPT, a specialized cricket assistant that only answers questions related to cricket. 
+              text: `You are CricketGPT, a specialized cricket assistant with deep knowledge of cricket history, players, matches, and current events.
               
               Rules:
               1. Only answer questions related to cricket (players, matches, statistics, tournaments, history, rules, etc.)
               2. If a question is not about cricket, politely decline to answer and explain you can only discuss cricket topics.
-              3. Provide accurate, up-to-date information about cricket whenever possible.
-              4. Keep answers concise but informative.
-              5. Be conversational and friendly in tone.
-              6. If you're unsure about a specific recent match or statistic, mention that you might not have the latest information.
+              3. Provide accurate, detailed information about cricket with enthusiasm.
+              4. Be conversational, friendly, and excited about cricket in your responses.
+              5. Include relevant stats and facts whenever possible.
+              6. If asked about recent events you're unsure about, acknowledge limitations but provide historical context.
+              7. Mention famous cricket moments and players when relevant.
+              8. Use cricket terminology appropriately.
               
               User question: ${userQuestion}`
             }
@@ -107,13 +109,13 @@ const CricketChatbot = () => {
     }
   };
 
-  // Fallback responses if API call fails
+  // Enhanced cricket fallback responses
   const cricketFallbackResponses = [
-    "I'm sorry, I couldn't retrieve the latest cricket information. Please try asking another cricket question!",
-    "As a cricket assistant, I should know this! Let me check with my team and get back to you on this cricket query.",
-    "That's a great cricket question! Unfortunately, I'm having trouble accessing my database right now. Please try again shortly.",
-    "I'm still learning about all aspects of cricket. Could you try rephrasing your question or ask about something else in cricket?",
-    "My cricket statistics database needs a quick refreshment. Please ask me something else about cricket while it updates!"
+    "Howzat! It seems my connection to the cricket database is temporarily stumped. Please try another cricket question!",
+    "Even cricket legends have a bad day at the pitch! I'm having trouble accessing my cricket knowledge right now. Could you try again?",
+    "That's a bouncer of a question! Unfortunately, I'm experiencing some technical difficulties. How about asking something else about cricket?",
+    "Just like rain delays a cricket match, I'm experiencing a brief delay in accessing my cricket information. I'll be back on the pitch shortly!",
+    "My cricket database needs a quick drinks break. Please try another question about players, matches, or cricket history!"
   ];
 
   const handleSendMessage = async () => {
@@ -131,9 +133,15 @@ const CricketChatbot = () => {
     setInputValue('');
     setIsLoading(true);
     
-    // Check if the message is cricket-related (simplified check)
+    // Enhanced cricket keywords for better detection
     const input = inputValue.toLowerCase();
-    const cricketKeywords = ['cricket', 'ipl', 'world cup', 'test match', 't20', 'odi', 'bowler', 'batsman', 'wicket', 'run', 'score', 'match', 'player', 'team', 'dhoni', 'kohli', 'sachin', 'rohit'];
+    const cricketKeywords = [
+      'cricket', 'ipl', 'world cup', 'test match', 't20', 'odi', 'bowler', 'batsman', 'wicket', 'run', 'score', 'match', 
+      'player', 'team', 'dhoni', 'kohli', 'sachin', 'rohit', 'bcci', 'icc', 'pakistan', 'australia', 'england', 'south africa',
+      'west indies', 'sri lanka', 'bangladesh', 'zealand', 'afghanistan', 'batting', 'bowling', 'fielding', 'stumps', 'crease',
+      'boundary', 'six', 'four', 'lbw', 'innings', 'over', 'maiden', 'hat-trick', 'duck', 'century', 'half-century', 'pitch',
+      'umpire', 'drs', 'all-rounder', 'captain', 'keeper', 'wicket-keeper', 'icc', 'ranking', 'stadium', 'tournament'
+    ];
     
     const isCricketRelated = cricketKeywords.some(keyword => input.includes(keyword));
     
@@ -144,8 +152,8 @@ const CricketChatbot = () => {
         // Call Gemini API for cricket-related queries
         responseContent = await callGeminiAPI(input);
       } else {
-        // Polite refusal for non-cricket questions
-        responseContent = "I'm sorry, I can only answer questions related to cricket. Please ask me something about cricket matches, players, teams, or tournaments!";
+        // Polite refusal for non-cricket questions with animation suggestion
+        responseContent = "I'm sorry, I can only answer questions related to cricket 🏏. Please ask me about cricket matches, players, teams, or tournaments! I'd be thrilled to share cricket knowledge with you.";
       }
       
       const botMessage: Message = {
@@ -158,7 +166,7 @@ const CricketChatbot = () => {
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error('Error in chat response:', error);
-      // Use a random fallback response
+      // Use a random enhanced fallback response
       const fallbackResponse = cricketFallbackResponses[Math.floor(Math.random() * cricketFallbackResponses.length)];
       
       const errorMessage: Message = {
@@ -190,7 +198,7 @@ const CricketChatbot = () => {
     return (
       <Button 
         onClick={toggleChat} 
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-cricket-600 hover:bg-cricket-700 text-white shadow-lg"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-cricket-600 hover:bg-cricket-700 text-white shadow-lg animate-bounce"
       >
         <MessageSquare className="h-6 w-6" />
       </Button>
@@ -229,7 +237,7 @@ const CricketChatbot = () => {
                   className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`rounded-lg px-4 py-2 max-w-[85%] animate-fade-in
+                    className={`rounded-lg px-4 py-2 max-w-[85%] ${message.isUser ? 'animate-slide-in-right' : 'animate-fade-in'}
                       ${message.isUser 
                         ? 'bg-cricket-100 text-cricket-900' 
                         : 'bg-gray-100 text-gray-800'
@@ -246,9 +254,9 @@ const CricketChatbot = () => {
                 <div className="flex justify-start">
                   <div className="bg-gray-100 rounded-lg px-4 py-2 max-w-[85%]">
                     <div className="flex space-x-1 items-center">
-                      <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse"></div>
-                      <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse delay-75"></div>
-                      <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse delay-150"></div>
+                      <div className="h-2 w-2 bg-cricket-500 rounded-full animate-pulse"></div>
+                      <div className="h-2 w-2 bg-cricket-500 rounded-full animate-pulse delay-75"></div>
+                      <div className="h-2 w-2 bg-cricket-500 rounded-full animate-pulse delay-150"></div>
                     </div>
                   </div>
                 </div>

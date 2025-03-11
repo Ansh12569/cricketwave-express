@@ -4,9 +4,9 @@ import { ArrowUpRight } from 'lucide-react';
 
 const CricketNav = () => {
   const categories = [
-    { name: 'IPL 2024', path: '/series/ipl-2024', featured: true },
-    { name: 'World Cup', path: '/series/world-cup' },
-    { name: 'Champions Trophy', path: '/series/champions-trophy' },
+    { name: 'IPL 2024', path: '/ipl-2024', featured: true },
+    { name: 'World Cup', path: '/world-cup' },
+    { name: 'Champions Trophy', path: '/champions-trophy' },
     { name: "Women's Cricket", path: '/womens-cricket' },
     { name: 'T20 Leagues', path: '/t20-leagues' },
     { name: 'Domestic Cricket', path: '/domestic-cricket' },

@@ -178,7 +178,7 @@ const WorldCup = () => {
                   { name: 'Nassau County Stadium', location: 'New York, USA', capacity: '34,000', matches: 8 },
                   { name: 'Central Broward Park', location: 'Florida, USA', capacity: '20,000', matches: 8 },
                   { name: 'Sir Vivian Richards Stadium', location: 'North Sound, Antigua', capacity: '19,000', matches: 7 },
-                  { name: 'Queen's Park Oval', location: 'Port of Spain, Trinidad', capacity: '23,000', matches: 8 },
+                  { name: 'Queen\'s Park Oval', location: 'Port of Spain, Trinidad', capacity: '23,000', matches: 8 },
                   { name: 'Dallas Cricket Stadium', location: 'Texas, USA', capacity: '16,000', matches: 7 },
                   { name: 'Brian Lara Stadium', location: 'Tarouba, Trinidad', capacity: '21,000', matches: 7 }
                 ].map((venue, index) => (
@@ -329,7 +329,7 @@ const WorldCup = () => {
                         {[
                           { date: 'June 26, 2024', match: 'Semi-Final 1', venue: 'Trinidad', time: '7:30 PM' },
                           { date: 'June 27, 2024', match: 'Semi-Final 2', venue: 'Guyana', time: '7:30 PM' },
-                          { date: 'June 29, 2024', match: 'Final', venue: 'Barbados', time: '7:30 PM' },
+                          { date: 'June 29, 2024', match: 'Final', venue: 'Barbados', time: '7:30 PM' }
                         ].map((match, index) => (
                           <tr key={index} className="border-b hover:bg-gray-50 transition-colors">
                             <td className="py-3 px-4">{match.date}</td>

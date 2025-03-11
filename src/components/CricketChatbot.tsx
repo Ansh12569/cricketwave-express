@@ -13,13 +13,17 @@ type Message = {
   timestamp: Date;
 };
 
+// Gemini API configuration
+const GEMINI_API_KEY = "AIzaSyAmDYh4zv0J3S8h1zo5c-4FEVfrrKsC7ng";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+
 const CricketChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hi there! I'm the Cricket Assistant. Ask me anything about cricket and I'll do my best to help!",
+      content: "Hi there! I'm the Cricket Assistant powered by Gemini AI. Ask me anything about cricket stats, players, matches, or news!",
       isUser: false,
       timestamp: new Date(),
     },
@@ -51,12 +55,66 @@ const CricketChatbot = () => {
     }
   }, [messages, isOpen, isMinimized]);
 
-  const mockResponses: Record<string, string> = {
-    ipl: "The Indian Premier League (IPL) is a professional Twenty20 cricket league in India. It is one of the most popular and lucrative cricket leagues in the world.",
-    worldcup: "The ICC Cricket World Cup is the international championship of One Day International cricket. The event is organized by the International Cricket Council (ICC).",
-    dhoni: "Mahendra Singh Dhoni is a former Indian cricketer and captain of the Indian national team. Under his captaincy, India won the 2007 ICC World Twenty20, the 2011 Cricket World Cup, and the 2013 ICC Champions Trophy.",
-    kohli: "Virat Kohli is an Indian international cricketer and the former captain of the Indian national cricket team. He is considered one of the best batsmen of his era.",
+  const generateGeminiPrompt = (userQuestion: string) => {
+    return {
+      contents: [
+        {
+          parts: [
+            {
+              text: `You are CricketGPT, a specialized cricket assistant that only answers questions related to cricket. 
+              
+              Rules:
+              1. Only answer questions related to cricket (players, matches, statistics, tournaments, history, rules, etc.)
+              2. If a question is not about cricket, politely decline to answer and explain you can only discuss cricket topics.
+              3. Provide accurate, up-to-date information about cricket whenever possible.
+              4. Keep answers concise but informative.
+              5. Be conversational and friendly in tone.
+              6. If you're unsure about a specific recent match or statistic, mention that you might not have the latest information.
+              
+              User question: ${userQuestion}`
+            }
+          ]
+        }
+      ]
+    };
   };
+
+  const callGeminiAPI = async (userQuestion: string) => {
+    try {
+      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(generateGeminiPrompt(userQuestion)),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from Gemini');
+      }
+
+      const data = await response.json();
+      
+      // Extract the response text from the Gemini API response
+      if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+        return data.candidates[0].content.parts[0].text;
+      } else {
+        throw new Error('Invalid response format from Gemini API');
+      }
+    } catch (error) {
+      console.error('Error calling Gemini API:', error);
+      return "I'm having trouble connecting to my cricket knowledge database right now. Please try again later or ask another cricket question!";
+    }
+  };
+
+  // Fallback responses if API call fails
+  const cricketFallbackResponses = [
+    "I'm sorry, I couldn't retrieve the latest cricket information. Please try asking another cricket question!",
+    "As a cricket assistant, I should know this! Let me check with my team and get back to you on this cricket query.",
+    "That's a great cricket question! Unfortunately, I'm having trouble accessing my database right now. Please try again shortly.",
+    "I'm still learning about all aspects of cricket. Could you try rephrasing your question or ask about something else in cricket?",
+    "My cricket statistics database needs a quick refreshment. Please ask me something else about cricket while it updates!"
+  ];
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -79,21 +137,15 @@ const CricketChatbot = () => {
     
     const isCricketRelated = cricketKeywords.some(keyword => input.includes(keyword));
     
-    // Simulate API response delay
-    setTimeout(() => {
+    try {
       let responseContent = '';
       
       if (isCricketRelated) {
-        // Find matching keywords in our mock database
-        const matchingKeyword = Object.keys(mockResponses).find(key => input.includes(key));
-        
-        if (matchingKeyword) {
-          responseContent = mockResponses[matchingKeyword];
-        } else {
-          responseContent = "That's a great cricket question! In a real implementation, I would connect to the Gemini API to provide a detailed response about cricket.";
-        }
+        // Call Gemini API for cricket-related queries
+        responseContent = await callGeminiAPI(input);
       } else {
-        responseContent = "I'm sorry, I can only answer questions related to cricket. Please ask me something about cricket matches, players, teams, or tournaments.";
+        // Polite refusal for non-cricket questions
+        responseContent = "I'm sorry, I can only answer questions related to cricket. Please ask me something about cricket matches, players, teams, or tournaments!";
       }
       
       const botMessage: Message = {
@@ -104,8 +156,28 @@ const CricketChatbot = () => {
       };
       
       setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error in chat response:', error);
+      // Use a random fallback response
+      const fallbackResponse = cricketFallbackResponses[Math.floor(Math.random() * cricketFallbackResponses.length)];
+      
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        content: fallbackResponse,
+        isUser: false,
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+      
+      toast({
+        title: "Connection Issue",
+        description: "Couldn't connect to the cricket knowledge base. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -163,7 +235,7 @@ const CricketChatbot = () => {
                         : 'bg-gray-100 text-gray-800'
                       }`}
                   >
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-sm whitespace-pre-line">{message.content}</p>
                     <p className="text-xs text-gray-500 mt-1">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>

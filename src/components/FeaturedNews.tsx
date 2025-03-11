@@ -8,7 +8,7 @@ const featuredNews = [
   {
     id: '1',
     title: 'India clinches thrilling victory against Australia in final over drama',
-    excerpt: 'Virat Kohli's masterful century guides India to a memorable win as the series concludes with high tension...',
+    excerpt: 'Virat Kohli\'s masterful century guides India to a memorable win as the series concludes with high tension...',
     category: 'International',
     image: 'https://placehold.co/800x450/3d9c40/ffffff?text=Cricket+Match',
     date: '2 hours ago',
@@ -17,7 +17,7 @@ const featuredNews = [
   {
     id: '2',
     title: 'IPL 2024: Complete team analysis and predictions ahead of the tournament',
-    excerpt: 'With the auction completed and teams finalized, our experts analyze each squad's strengths and weaknesses...',
+    excerpt: 'With the auction completed and teams finalized, our experts analyze each squad\'s strengths and weaknesses...',
     category: 'IPL',
     image: 'https://placehold.co/800x450/3d9c40/ffffff?text=IPL+2024',
     date: '5 hours ago',
@@ -26,7 +26,7 @@ const featuredNews = [
   {
     id: '3',
     title: "Women's World Cup: England advances to semifinals with dominant performance",
-    excerpt: 'England's bowling attack dismantles South Africa as they secure their place in the final four of the tournament...',
+    excerpt: 'England\'s bowling attack dismantles South Africa as they secure their place in the final four of the tournament...',
     category: "Women's Cricket",
     image: 'https://placehold.co/800x450/3d9c40/ffffff?text=Womens+Cricket',
     date: '1 day ago',
